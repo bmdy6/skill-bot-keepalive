@@ -1,0 +1,2 @@
+{"event": "loop_start", "run_id": "demo", "pid": 113560, "epoch": 1794410248.9947186, "timestamp": "2026-11-11T23:17:28.994719+08:00", "resume_from_seq": 0, "official_start_epoch": 1794410248.0, "deadline_epoch": 1794410256.0}
+{"event": "deadline_stop", "pid": 113560, "epoch": 1794410256.00104, "timestamp": "2026-11-11T23:17:36.001040+08:00", "run_id": "demo"}

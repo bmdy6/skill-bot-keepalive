@@ -1,0 +1,26 @@
+{
+  "accent": "#2f6f4e",
+  "images": [
+    {
+      "id": "hero",
+      "template": "hero-prompt",
+      "title": {
+        "en": "A heartbeat log you can check",
+        "zh-CN": "一份可核验的心跳记录"
+      },
+      "subtitle": {
+        "en": "The same script writes heartbeats.jsonl until the deadline.",
+        "zh-CN": "同一脚本持续写入 heartbeats.jsonl，直到截止时间。"
+      },
+      "prompt": {
+        "en": "Use bot-keepalive to keep the guard running for 1 hour, leave a heartbeat log, stop at the deadline, and report what you measured. Do not auto-repeat, and do not touch my network or other work.",
+        "zh-CN": "用 bot-keepalive 保活一小时。请每分钟写下心跳记录，到我设定的截止时间就停止，不要自动续跑，最后报告你实际测到的结果。不要改动网络或其他工作，这份心跳记录要可以核对。"
+      },
+      "resultLabel": {
+        "en": "heartbeats.jsonl",
+        "zh-CN": "heartbeats.jsonl"
+      },
+      "captureId": "core"
+    }
+  ]
+}

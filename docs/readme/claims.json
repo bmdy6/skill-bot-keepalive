@@ -1,0 +1,44 @@
+[
+  {
+    "claim": "One hour uses roughly 6–15 agent tool calls instead of about 130.",
+    "factIds": [
+      "lean-tool-calls"
+    ]
+  },
+  {
+    "claim": "一小时大约只要 6 到 15 次工具调用，而不是大约 130 次。",
+    "factIds": [
+      "lean-tool-calls"
+    ]
+  },
+  {
+    "claim": "`scripts/heartbeat_loop.py` appends one line per minute to `heartbeats.jsonl`.",
+    "factIds": [
+      "writes-heartbeats-jsonl",
+      "heartbeat-every-60s-skill",
+      "interval-default"
+    ]
+  },
+  {
+    "claim": "`scripts/heartbeat_loop.py` 每分钟往 `heartbeats.jsonl` 追加一行。",
+    "factIds": [
+      "writes-heartbeats-jsonl",
+      "heartbeat-every-60s-skill",
+      "interval-default"
+    ]
+  },
+  {
+    "claim": "At the deadline the script writes a `final` line and exits; the agent writes `summary.json` and reports what it measured.",
+    "factIds": [
+      "final-at-deadline",
+      "summary-json"
+    ]
+  },
+  {
+    "claim": "到截止时间脚本会写一条 `final` 后退出，agent 再写出 `summary.json`，并报告实际测到的结果。",
+    "factIds": [
+      "final-at-deadline",
+      "summary-json"
+    ]
+  }
+]

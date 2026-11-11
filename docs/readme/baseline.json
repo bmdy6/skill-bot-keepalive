@@ -1,0 +1,75 @@
+{
+  "readmes": [
+    {
+      "file": "README.md",
+      "headings": [
+        "Quick start",
+        "How it works",
+        "Measured (one 1-hour trial)",
+        "Lesson from testing",
+        "Boundaries"
+      ]
+    },
+    {
+      "file": "README.zh-CN.md",
+      "headings": [
+        "快速开始",
+        "工作方式",
+        "实测（一次一小时）",
+        "实测得到的教训",
+        "边界"
+      ]
+    }
+  ],
+  "integrations": [
+    {
+      "id": "integration-en-gh",
+      "claim": "Tool, platform or runtime mentioned in the README",
+      "value": "gh",
+      "source": "README.md:10",
+      "kind": "integration",
+      "readme": "README.md"
+    },
+    {
+      "id": "integration-en-jsonl",
+      "claim": "Tool, platform or runtime mentioned in the README",
+      "value": "JSONL",
+      "source": "README.md:19",
+      "kind": "integration",
+      "readme": "README.md"
+    },
+    {
+      "id": "integration-en-json",
+      "claim": "Tool, platform or runtime mentioned in the README",
+      "value": "JSON",
+      "source": "README.md:19",
+      "kind": "integration",
+      "readme": "README.md"
+    },
+    {
+      "id": "integration-zh-gh",
+      "claim": "Tool, platform or runtime mentioned in the README",
+      "value": "gh",
+      "source": "README.zh-CN.md:10",
+      "kind": "integration",
+      "readme": "README.zh-CN.md"
+    },
+    {
+      "id": "integration-zh-jsonl",
+      "claim": "Tool, platform or runtime mentioned in the README",
+      "value": "JSONL",
+      "source": "README.zh-CN.md:19",
+      "kind": "integration",
+      "readme": "README.zh-CN.md"
+    },
+    {
+      "id": "integration-zh-json",
+      "claim": "Tool, platform or runtime mentioned in the README",
+      "value": "JSON",
+      "source": "README.zh-CN.md:19",
+      "kind": "integration",
+      "readme": "README.zh-CN.md"
+    }
+  ],
+  "badges": []
+}

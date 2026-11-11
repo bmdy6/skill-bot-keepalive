@@ -1,38 +1,84 @@
 # bot-keepalive
 
-Keep an agent's background guard alive for a bounded time with minute heartbeats, while using about a tenth of the quota.
+限定时间内维持 Grok 云端电脑醒着，并留下心跳记录。
 
-[简体中文](README.zh-CN.md) · [MIT](LICENSE)
+[English](README.en.md) · [MIT](LICENSE)
 
-## Quick start
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/hero-dark.zh-CN.png">
+  <img src="docs/readme/hero-light.zh-CN.png" alt="一次短时运行写出的 heartbeats.jsonl，最后一条是 final" width="838">
+</picture>
+
+短时演示：`scripts/heartbeat_loop.py` 写入 `heartbeats.jsonl`，这里间隔为 2 秒，到截止时间写出 `final`。正常使用时每分钟写一次，直到你设定的截止时间。
+
+## 快速开始
 
 ```sh
 gh repo clone bmdy6/skill-bot-keepalive .agents/skills/bot-keepalive
 ```
 
-Then tell your agent:
+然后告诉你的 agent：
 
-> Use bot-keepalive to keep the guard running for 1 hour.
+> 用 bot-keepalive 保活一小时。
 
-## How it works
+需要 Python 3 和能使用技能的 agent；克隆需要 `gh` 和网络。
 
-- `scripts/heartbeat_loop.py` runs in the background. It appends one heartbeat per minute to `heartbeats.jsonl`, writes a `final` line at the deadline and exits by itself.
-- The agent awaits that job in 10–13 minute chunks, relays about every 30 minutes and writes a `summary.json` at the end.
+## 你会得到什么
 
-## Measured (one 1-hour trial)
+- **更少的工具调用。** 一小时大约只要 6 到 15 次工具调用，而不是大约 130 次。
+- **每分钟一条可核验的心跳记录。** `scripts/heartbeat_loop.py` 每分钟往 `heartbeats.jsonl` 追加一行。
+- **到点停止并给出报告。** 到截止时间脚本会写一条 `final` 后退出，agent 再写出 `summary.json`，并报告实际测到的结果。
 
-| | Per-minute agent heartbeats | Lean mode (this skill) |
+## 如何工作
+
+1. agent 在后台启动脚本。脚本会马上写第一条心跳，之后每 60 秒写一次。
+2. agent 大约每 10 分钟检查一次，大约每 30 分钟接力一次，并且必须一直等待。等停了，云端电脑就可能睡着。
+3. 到截止时间后，脚本写出 `final` 并退出，agent 再写出报告。
+
+## 实测（一次一小时）
+
+| | 旧办法：agent 每分钟自己写 | 省额度模式（本技能） |
 |---|---|---|
-| Agent tool calls per hour | ~130 | 15 |
-| Max gap between heartbeats | 87–234 s across runs | 60 s |
-| Heartbeats | 62–66 / hour, all written | 60 / 60, all written |
+| 每小时工具调用 | 约 130 次 | 15 次 |
+| 心跳最大间隔 | 87 到 234 秒（多次运行） | 60 秒 |
+| 心跳 | 每小时 62 到 66 次，全部写成功 | 60 次，全部写成功 |
 
-Usage counters are usually shared account-wide, so treat any quota comparison as indicative only.
+额度一般是整个账户共用的，所以额度对比只能当参考。
 
-## Lesson from testing
+## 实测得到的教训
 
-The agent's await keeps the cloud machine awake, not the script. When the worker stopped awaiting halfway through one run, the machine froze about 5 minutes later and no heartbeats were written for ~45 minutes. The skill now tells the agent to keep awaiting in ~10 minute chunks until the deadline.
+让云端电脑醒着的是 agent 在后台等待，不是脚本。有一轮跑到一半，agent 不再等了，大约 5 分钟后电脑就睡了，中间约 45 分钟一条心跳都没有。所以技能现在要求 agent 每 10 分钟左右等一次，一直守到截止时间。
 
-## Boundaries
+## 选项
 
-It does not stop the computer from sleeping. It does not touch your network, other keepalive scripts or scheduled tasks. It stops at the deadline and never auto-repeats.
+| 选项 | 用途 |
+|---|---|
+| 时长 | 以你授权的时间为准，默认请求是 1 小时。除非你明确延长，截止时间不会改。 |
+| 省额度模式 | 默认做法。后台脚本写心跳，agent 大约每 10 分钟检查一次。 |
+| 逐分钟由 agent 写心跳 | 只有在你明确要求 agent 自己每分钟醒来时才用。额度会多花好几倍。 |
+
+## 常见问题和边界
+
+**它能保证电脑永不休眠吗？** 不能。这个技能并不承诺机器永远不睡。
+
+**只跑脚本够不够？** 不够。如果 agent 不再等待，电脑可能睡着，脚本也不会再写心跳。
+
+**到截止时间后会自动再跑吗？** 不会。到点就停，不会自动续跑。
+
+**额度变化能都算在这一次上吗？** 不能。用量窗口通常是整个账户共用的。
+
+**它会改我的网络或其他任务吗？** 不会。它不动网络、别的保活脚本、定时任务或你的其他工作。
+
+<details><summary>权利与法律说明</summary>
+
+本仓库以 MIT 许可证发布。技能只指导一次限定时长的保活，不保证云端电脑保持醒着，也不把用量变化单独归到这一次运行。
+
+</details>
+
+## 参与贡献
+
+请提交可复现的问题或 pull request。
+
+## 许可证
+
+[MIT](LICENSE)。

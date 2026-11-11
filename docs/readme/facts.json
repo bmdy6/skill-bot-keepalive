@@ -1,0 +1,116 @@
+[
+  {
+    "id": "lean-tool-calls",
+    "claim": "One hour costs roughly 6\u201315 tool calls instead of about 130",
+    "value": "6\u201315 tool calls instead of ~130",
+    "source": "SKILL.md:7"
+  },
+  {
+    "id": "minute-heartbeats-script",
+    "claim": "A background script writes the minute heartbeats",
+    "value": "A small background script writes the minute heartbeats",
+    "source": "SKILL.md:7"
+  },
+  {
+    "id": "agent-checks-10min",
+    "claim": "The agent checks in about every 10 minutes",
+    "value": "The agent only checks in about every 10 minutes",
+    "source": "SKILL.md:7"
+  },
+  {
+    "id": "await-keeps-awake",
+    "claim": "The agent's await keeps the machine awake, not the script",
+    "value": "The agent's await is what keeps the machine awake, not the script",
+    "source": "SKILL.md:9"
+  },
+  {
+    "id": "freeze-lesson",
+    "claim": "When the worker stopped awaiting, the machine froze for about 45 minutes",
+    "value": "stayed frozen for ~45 minutes",
+    "source": "SKILL.md:9"
+  },
+  {
+    "id": "no-never-sleep-promise",
+    "claim": "The skill does not promise the machine never sleeps",
+    "value": "It does not promise the machine never sleeps",
+    "source": "SKILL.md:3"
+  },
+  {
+    "id": "interval-default",
+    "claim": "The default heartbeat interval is 60 seconds",
+    "value": "default=60.0",
+    "source": "scripts/heartbeat_loop.py:18"
+  },
+  {
+    "id": "writes-heartbeats-jsonl",
+    "claim": "The script writes one heartbeat per line to heartbeats.jsonl",
+    "value": "Writes RUN_DIR/heartbeats.jsonl (one line per heartbeat) and RUN_DIR/events.jsonl,",
+    "source": "scripts/heartbeat_loop.py:7"
+  },
+  {
+    "id": "final-at-deadline",
+    "claim": "At the deadline the script writes a kind=final line and exits",
+    "value": "writes a kind=final line at the deadline, then exits",
+    "source": "scripts/heartbeat_loop.py:8"
+  },
+  {
+    "id": "flock-one-loop",
+    "claim": "A flock keeps a single loop per run",
+    "value": "A flock on RUN_DIR/run.lock",
+    "source": "scripts/heartbeat_loop.py:8"
+  },
+  {
+    "id": "heartbeat-every-60s-skill",
+    "claim": "The script writes a heartbeat immediately, then every 60 seconds",
+    "value": "The script writes a heartbeat immediately, then every 60 s",
+    "source": "SKILL.md:22"
+  },
+  {
+    "id": "relay-30min",
+    "claim": "The agent relays about every 30 minutes",
+    "value": "about every 30 min (never later than 45)",
+    "source": "SKILL.md:24"
+  },
+  {
+    "id": "await-10min-chunks",
+    "claim": "The agent awaits in about 10-minute chunks",
+    "value": "await it in ~10 min chunks",
+    "source": "SKILL.md:23"
+  },
+  {
+    "id": "summary-json",
+    "claim": "After the deadline the agent writes summary.json",
+    "value": "Write `summary.json` (FINAL) and release the lock",
+    "source": "SKILL.md:26"
+  },
+  {
+    "id": "shared-usage",
+    "claim": "Usage change cannot be attributed only to this run",
+    "value": "the change can't be attributed only to this run",
+    "source": "SKILL.md:36"
+  },
+  {
+    "id": "deadline-unless-extended",
+    "claim": "The deadline never changes unless the user explicitly extends it",
+    "value": "The deadline never changes unless the user explicitly extends it",
+    "source": "SKILL.md:18"
+  },
+  {
+    "id": "dont-touch-network",
+    "claim": "The skill does not touch network settings or other keepalive scripts",
+    "value": "Don't touch other keepalive scripts, network settings, scheduled routines or user work",
+    "source": "SKILL.md:14"
+  },
+  {
+    "id": "alt-per-minute-cost",
+    "claim": "Per-minute agent heartbeats cost several times more quota",
+    "value": "This costs several times more quota",
+    "source": "SKILL.md:39"
+  },
+  {
+    "id": "nothing-after-final",
+    "claim": "Nothing is written after the final line",
+    "value": "nothing is written after the final line",
+    "source": "scripts/heartbeat_loop.py:9"
+  }
+]

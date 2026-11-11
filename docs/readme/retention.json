@@ -1,0 +1,56 @@
+{
+  "intentionalDeletions": [
+    {
+      "id": "heading:README.md:Quick start",
+      "reason": "README.md is now Chinese; this section is titled 快速开始, and the English heading lives in README.en.md."
+    },
+    {
+      "id": "heading:README.md:How it works",
+      "reason": "README.md is now Chinese; this section is titled 如何工作, and the English heading lives in README.en.md."
+    },
+    {
+      "id": "heading:README.md:Measured (one 1-hour trial)",
+      "reason": "README.md is now Chinese; this section is titled 实测（一次一小时）, and the English heading lives in README.en.md. The measured table is kept in both files."
+    },
+    {
+      "id": "heading:README.md:Lesson from testing",
+      "reason": "README.md is now Chinese; this section is titled 实测得到的教训, and the English heading lives in README.en.md. The lesson is kept in both files."
+    },
+    {
+      "id": "heading:README.md:Boundaries",
+      "reason": "README.md is now Chinese; the boundary questions moved into 常见问题和边界, and the English FAQ lives in README.en.md."
+    },
+    {
+      "id": "heading:README.zh-CN.md:快速开始",
+      "reason": "The Chinese README is now the main README.md; README.zh-CN.md was removed so the English text could move to README.en.md without a duplicate Chinese file. The section remains as 快速开始 in README.md."
+    },
+    {
+      "id": "heading:README.zh-CN.md:工作方式",
+      "reason": "README.zh-CN.md was removed; the section continues in README.md as 如何工作, matching the skill's bilingual heading map."
+    },
+    {
+      "id": "heading:README.zh-CN.md:实测（一次一小时）",
+      "reason": "README.zh-CN.md was removed; the measured table remains under the same title in README.md."
+    },
+    {
+      "id": "heading:README.zh-CN.md:实测得到的教训",
+      "reason": "README.zh-CN.md was removed; the lesson remains under the same title in README.md."
+    },
+    {
+      "id": "heading:README.zh-CN.md:边界",
+      "reason": "README.zh-CN.md was removed; the boundary questions now live under 常见问题和边界 in README.md."
+    },
+    {
+      "id": "integration-zh-gh",
+      "reason": "README.zh-CN.md was removed; gh remains in the install command in README.md and README.en.md."
+    },
+    {
+      "id": "integration-zh-jsonl",
+      "reason": "README.zh-CN.md was removed; heartbeats.jsonl remains in README.md and README.en.md."
+    },
+    {
+      "id": "integration-zh-json",
+      "reason": "README.zh-CN.md was removed; summary.json remains in README.md and README.en.md."
+    }
+  ]
+}

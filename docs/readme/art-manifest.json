@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "accent": "#2f6f4e",
+  "files": [
+    {
+      "file": "hero-light.png",
+      "template": "hero-prompt",
+      "theme": "light",
+      "language": "en",
+      "kind": "real",
+      "captureId": "core",
+      "inputFile": null,
+      "labels": {
+        "result": "heartbeats.jsonl"
+      },
+      "sha256": "c979dfd0162f011e737e99e7f60bc42d124ea3779072c14f752654a06058d831",
+      "bytes": 120181,
+      "cssWidth": 900,
+      "cssHeight": 256.78125,
+      "contentBounds": {
+        "left": 17,
+        "top": 23,
+        "right": 883,
+        "bottom": 239.78125
+      },
+      "contentRatio": 0.6238187778470785,
+      "contentArea": 144166.46899414062,
+      "balanceRatio": 0.8469797866785466,
+      "minMainFontSize": 18,
+      "endpoints": [],
+      "checks": {
+        "overflow": "pass",
+        "fontSize": "pass",
+        "contrast": "pass",
+        "fields": "pass",
+        "mainText": "pass",
+        "density": "pass",
+        "balance": "pass",
+        "links": "pass",
+        "size": "pass"
+      },
+      "problems": {
+        "overflow": [],
+        "fontSize": [],
+        "contrast": [],
+        "fields": [],
+        "mainText": [],
+        "density": [],
+        "balance": [],
+        "links": []
+      },
+      "width": 900,
+      "height": 256.78125
+    },
+    {
+      "file": "hero-dark.png",
+      "template": "hero-prompt",
+      "theme": "dark",
+      "language": "en",
+      "kind": "real",
+      "captureId": "core",
+      "inputFile": null,
+      "labels": {
+        "result": "heartbeats.jsonl"
+      },
+      "sha256": "f753835d8c61f06dd93245dd915c7b0a5b0a76c32826a0533236eaf5d8b11119",
+      "bytes": 120584,
+      "cssWidth": 900,
+      "cssHeight": 256.78125,
+      "contentBounds": {
+        "left": 17,
+        "top": 23,
+        "right": 883,
+        "bottom": 239.78125
+      },
+      "contentRatio": 0.6238187778470785,
+      "contentArea": 144166.46899414062,
+      "balanceRatio": 0.8469797866785466,
+      "minMainFontSize": 18,
+      "endpoints": [],
+      "checks": {
+        "overflow": "pass",
+        "fontSize": "pass",
+        "contrast": "pass",
+        "fields": "pass",
+        "mainText": "pass",
+        "density": "pass",
+        "balance": "pass",
+        "links": "pass",
+        "size": "pass"
+      },
+      "problems": {
+        "overflow": [],
+        "fontSize": [],
+        "contrast": [],
+        "fields": [],
+        "mainText": [],
+        "density": [],
+        "balance": [],
+        "links": []
+      },
+      "width": 900,
+      "height": 256.78125
+    },
+    {
+      "file": "hero-light.zh-CN.png",
+      "template": "hero-prompt",
+      "theme": "light",
+      "language": "zh-CN",
+      "kind": "real",
+      "captureId": "core",
+      "inputFile": null,
+      "labels": {
+        "result": "heartbeats.jsonl"
+      },
+      "sha256": "ac480f08fb0d61075651c9afe8631bdf47923be29e3353ad9553cfd91c2eaa4e",
+      "bytes": 131496,
+      "cssWidth": 900,
+      "cssHeight": 256.78125,
+      "contentBounds": {
+        "left": 17,
+        "top": 23,
+        "right": 883,
+        "bottom": 239.78125
+      },
+      "contentRatio": 0.6208967868527984,
+      "contentArea": 143491.18774414062,
+      "balanceRatio": 0.8383284627765669,
+      "minMainFontSize": 18,
+      "endpoints": [],
+      "checks": {
+        "overflow": "pass",
+        "fontSize": "pass",
+        "contrast": "pass",
+        "fields": "pass",
+        "mainText": "pass",
+        "density": "pass",
+        "balance": "pass",
+        "links": "pass",
+        "size": "pass"
+      },
+      "problems": {
+        "overflow": [],
+        "fontSize": [],
+        "contrast": [],
+        "fields": [],
+        "mainText": [],
+        "density": [],
+        "balance": [],
+        "links": []
+      },
+      "width": 900,
+      "height": 256.78125
+    },
+    {
+      "file": "hero-dark.zh-CN.png",
+      "template": "hero-prompt",
+      "theme": "dark",
+      "language": "zh-CN",
+      "kind": "real",
+      "captureId": "core",
+      "inputFile": null,
+      "labels": {
+        "result": "heartbeats.jsonl"
+      },
+      "sha256": "fa441444c36a9293ab809d777c637974b9b761c6a3f3c043ff7a1608198f1f7d",
+      "bytes": 131867,
+      "cssWidth": 900,
+      "cssHeight": 256.78125,
+      "contentBounds": {
+        "left": 17,
+        "top": 23,
+        "right": 883,
+        "bottom": 239.78125
+      },
+      "contentRatio": 0.6208967868527984,
+      "contentArea": 143491.18774414062,
+      "balanceRatio": 0.8383284627765669,
+      "minMainFontSize": 18,
+      "endpoints": [],
+      "checks": {
+        "overflow": "pass",
+        "fontSize": "pass",
+        "contrast": "pass",
+        "fields": "pass",
+        "mainText": "pass",
+        "density": "pass",
+        "balance": "pass",
+        "links": "pass",
+        "size": "pass"
+      },
+      "problems": {
+        "overflow": [],
+        "fontSize": [],
+        "contrast": [],
+        "fields": [],
+        "mainText": [],
+        "density": [],
+        "balance": [],
+        "links": []
+      },
+      "width": 900,
+      "height": 256.78125
+    }
+  ]
+}
