@@ -57,6 +57,20 @@ The agent's await keeps the cloud machine awake, not the script. When the worker
 | Lean mode | The default. A background script writes heartbeats; the agent checks about every 10 minutes. |
 | Per-minute agent heartbeats | Use this only when you ask the agent itself to wake every minute. It costs several times more quota. |
 
+
+## Optional: auto-heal disconnects
+
+Heartbeats keep the cloud machine awake; the disconnects on the evening of 2026-11-11 were on the network path. That evening `/tmp/tailscaled.log` recorded 8 NAT endpoint changes, and the box-to-Mac DERP path went stale while Mac-to-box still worked. Optional `scripts/netwatch.sh` pings the peer and, after consecutive failures, runs a gentle `debug rebind` and `debug restun` with no quota cost; it never runs `down`/`up` or restarts tailscaled.
+
+Rebind plus restun restored box-to-Mac pings in that incident.
+
+Start it with nohup. A supervisor can rerun the same command if it is missing; the script exits 0 when a copy is already running:
+
+```sh
+nohup env TS_CLI=/path/to/tailscale TS_SOCKET=/path/to/ts.sock PEER_IP=100.x.x.x \
+  LOG=netwatch.log bash scripts/netwatch.sh >/dev/null 2>&1 &
+```
+
 ## FAQ and boundaries
 
 **Does it stop the computer from sleeping?** No. It does not promise the machine never sleeps.
@@ -67,7 +81,7 @@ The agent's await keeps the cloud machine awake, not the script. When the worker
 
 **Can I attribute the usage change to this run alone?** No. Usage windows are usually shared account-wide.
 
-**Does it change my network or other tasks?** No. It does not touch your network, other keepalive scripts, scheduled tasks, or other work.
+**Does it change my network or other tasks?** The keepalive loop does not. The optional netwatch may run a gentle rebind and restun after consecutive ping failures; it never runs down/up or restarts tailscaled.
 
 <details><summary>Rights and legal detail</summary>
 

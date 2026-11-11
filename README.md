@@ -57,6 +57,20 @@ gh repo clone bmdy6/skill-bot-keepalive .agents/skills/bot-keepalive
 | 省额度模式 | 默认做法。后台脚本写心跳，agent 大约每 10 分钟检查一次。 |
 | 逐分钟由 agent 写心跳 | 只有在你明确要求 agent 自己每分钟醒来时才用。额度会多花好几倍。 |
 
+
+## 可选：自动修复断线
+
+心跳只能让云端电脑保持醒着，但 2026-11-11 晚上的断开是网络侧的问题。那天晚上 `/tmp/tailscaled.log` 记录到 NAT 端点变了 8 次，电脑到 Mac 的 DERP 路径变旧了，而 Mac 到电脑仍然通。可选的 `scripts/netwatch.sh` 会定时 ping 对端，连续失败后做一次温和的 `debug rebind` 和 `debug restun`，不消耗额度；它不会执行 `down`/`up`，也不会重启 tailscaled。
+
+那次事件里，rebind 加 restun 恢复了电脑到 Mac 的 ping。
+
+用 nohup 启动即可。如果你已有守护脚本，让它在进程不在时再执行同一条命令；脚本用 flock 保证只跑一份，已有实例时会以状态 0 退出：
+
+```sh
+nohup env TS_CLI=/path/to/tailscale TS_SOCKET=/path/to/ts.sock PEER_IP=100.x.x.x \
+  LOG=netwatch.log bash scripts/netwatch.sh >/dev/null 2>&1 &
+```
+
 ## 常见问题和边界
 
 **它能保证电脑永不休眠吗？** 不能。这个技能并不承诺机器永远不睡。
@@ -67,7 +81,7 @@ gh repo clone bmdy6/skill-bot-keepalive .agents/skills/bot-keepalive
 
 **额度变化能都算在这一次上吗？** 不能。用量窗口通常是整个账户共用的。
 
-**它会改我的网络或其他任务吗？** 不会。它不动网络、别的保活脚本、定时任务或你的其他工作。
+**它会改我的网络或其他任务吗？** 保活本身不会。可选的断线修复只会在连续 ping 失败后做温和的 rebind 和 restun，不会 down/up，也不会重启 tailscaled。
 
 <details><summary>权利与法律说明</summary>
 
