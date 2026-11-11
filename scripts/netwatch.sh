@@ -72,7 +72,7 @@ last_fix=0
 FIX_COOLDOWN=60
 
 while true; do
-  if timeout 8 "${ts_cmd[@]}" ping -c 1 --timeout 6s "$PEER_IP" >/dev/null 2>&1; then
+  if timeout 8 "${ts_cmd[@]}" ping -c 1 --timeout 6s "$PEER_IP" 2>&1 | grep -q "^pong"; then
     if [ "$fails" -ge "$FAILS" ]; then
       echo "$(date '+%F %T') recovered after $fails fails" >>"$LOG"
     fi
