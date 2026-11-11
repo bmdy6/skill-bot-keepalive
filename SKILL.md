@@ -4,7 +4,9 @@ description: Use when an agent must keep a bounded background guard running for 
 ---
 # bot-keepalive (lean mode)
 
-A small background script writes the minute heartbeats. The agent only checks in every 10–13 minutes, so one hour costs roughly 6–15 tool calls instead of ~130.
+A small background script writes the minute heartbeats. The agent only checks in about every 10 minutes, so one hour costs roughly 6–15 tool calls instead of ~130.
+
+**The agent's await is what keeps the machine awake, not the script.** In one trial the worker stopped awaiting about 30 minutes in. The cloud machine froze about 5 minutes later and stayed frozen for ~45 minutes. The script's sleep paused with it, so no heartbeats were written. Never leave a run without an agent actively awaiting.
 
 ## Rules
 - Wait with the platform's await tool (e.g. `AwaitShell`, max ~13 min per call). Never `sleep` in a foreground shell call; `sleep` inside the background script is fine.
@@ -18,8 +20,9 @@ A small background script writes the minute heartbeats. The agent only checks in
 3. **Start the loop fast** (aim for the first heartbeat within a few dozen seconds of the start):
    `nohup python3 -u scripts/heartbeat_loop.py --dir RUN_DIR --run-id ID --start START --deadline DEADLINE --tz-offset H > RUN_DIR/loop.out 2>&1 &`
    Start it as a background shell job and record the PID. The script writes a heartbeat immediately, then every 60 s. At the deadline it writes `kind=final` and exits. A flock keeps one loop per run, and nothing is written after `final`.
-4. **Check in rarely.** Await the background job in 10–13 min chunks. After each chunk run one quick check: the log tail, whether the PID is alive and the max gap so far. If the loop dies before the deadline, restart it once and log that. Never start a second loop while the PID is alive.
-5. **Relay** about every 30 min (never later than 45). Return `RELAY` with the loop still running. The parent resumes the same worker with the same deadline.
+4. **Check in rarely, but never stop awaiting.** Start a tiny watcher job (`while kill -0 PID; do sleep 20; done`) and await it in ~10 min chunks (stay well under the 13 min cap). Don't end your turn between chunks. After each chunk run one quick check: the log tail, whether the PID is alive and the max gap so far. If the loop dies before the deadline, restart it once and log that. Never start a second loop while the PID is alive.
+5. **Relay** about every 30 min (never later than 45). Return `RELAY` with the loop still running. The parent resumes the same worker right away, with the same deadline. Give each run's worker only that run's dir and ID, so it can't mix up runs.
+   - If a heartbeat gap is several minutes long, the machine probably froze. Report it as a freeze, not as a write failure.
 6. **Stop.** After the deadline, confirm the loop wrote `final` and exited. Write `summary.json` (FINAL) and release the lock.
 7. **Report:**
    - heartbeats and successes

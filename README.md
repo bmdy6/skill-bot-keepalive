@@ -29,6 +29,10 @@ Then tell your agent:
 
 Usage counters are usually shared account-wide, so treat any quota comparison as indicative only.
 
+## Lesson from testing
+
+The agent's await keeps the cloud machine awake, not the script. When the worker stopped awaiting halfway through one run, the machine froze about 5 minutes later and no heartbeats were written for ~45 minutes. The skill now tells the agent to keep awaiting in ~10 minute chunks until the deadline.
+
 ## Boundaries
 
 It does not stop the computer from sleeping. It does not touch your network, other keepalive scripts or scheduled tasks. It stops at the deadline and never auto-repeats.
