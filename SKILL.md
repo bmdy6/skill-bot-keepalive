@@ -14,7 +14,8 @@ description: >-
 2. **SSH 层**：在用户电脑上（经本机 Grok 应用的 machine Shell）`nc -z` 盒子 22 端口，再用 `ssh -o BatchMode=yes -o ConnectTimeout=15` 跑一条 echo。macOS 没有 `timeout` 命令，别用。
 3. **服务层**：盒子上远程守护进程（如 orcad）在跑、端口在监听；`ss -tnp` 看有没有来自 tailscaled 的 ESTAB 连接挂在该端口上，有就说明客户端此刻是连着的。
 4. **客户端层**：读客户端自己的日志/trace（如 Orca 的 `main.trace.ndjson`），找 `control-socket-close`、`remote_runtime_unavailable` 等错误和时间间隔；周期性出现（例如每5–6分钟）说明是链路不稳导致反复重连，不是彻底断开。
-5. 版本：客户端升级后，若远程守护版本记录与客户端版本不一致，客户端通常会自己重新部署；先等它自己完成，别手动删改。
+5. **盒子重启**：先看 `uptime`。若刚开机（tailscaled、守护脚本、orcad 都不在，`/tmp` 被清空），这不是网络问题：后台启动盒子的守护脚本（如 `/home/box/keepalive.sh`，它会拉起 tailscaled 和 netwatch），等十几秒确认对端能 ping 通、RunSSH 仍为 true；orcad 不要手动起，客户端重连后会自己重新部署，约半分钟后 ESTAB 回来。心跳脚本若在 `/tmp` 里丢了，从上一个运行目录复制。告诉用户“盒子重启过、已恢复到哪一层”。
+6. 版本：客户端升级后，若远程守护版本记录与客户端版本不一致，客户端通常会自己重新部署；先等它自己完成，别手动删改。
 
 结论按“哪一层、什么现象、现在状态”一两句告诉用户；客户端界面显示“正在发现/0 个主机”可能只是正在重连，先确认第3层再下结论。只做温和修复（rebind/restun、对端 ping、`tailscale up`），不重启守护进程、不 down/up，除非用户授权。
 
