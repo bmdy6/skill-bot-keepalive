@@ -1,0 +1,163 @@
+{
+  "renderer": "github-api",
+  "remoteImages": "get-only",
+  "readme": "README.en.md",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "items": {
+        "name": {
+          "top": 96,
+          "bottom": 146.59375,
+          "left": 221,
+          "right": 1059
+        },
+        "oneLiner": {
+          "top": 162.59375,
+          "bottom": 186.59375,
+          "left": 221,
+          "right": 1059
+        },
+        "hero": {
+          "top": 242.59375,
+          "bottom": 481.875,
+          "left": 221,
+          "right": 1059
+        },
+        "install": {
+          "top": 614.0625,
+          "bottom": 665.765625,
+          "left": 221,
+          "right": 1059
+        }
+      },
+      "checks": {
+        "name": true,
+        "oneLiner": true,
+        "hero": true,
+        "install": true
+      },
+      "install": "gh repo clone bmdy6/skill-bot-keepalive .agents/skills/bot-keepalive",
+      "contentWidth": 838,
+      "fold": 800,
+      "images": [
+        {
+          "src": "repo://skill-bot-keepalive/docs/readme/hero-light.png",
+          "width": 838,
+          "height": 239.28125,
+          "top": 242.59375,
+          "bottom": 481.875,
+          "loaded": true,
+          "naturalWidth": 1800
+        }
+      ],
+      "screenshot": "first-screen-desktop.png",
+      "pass": true
+    },
+    "desktop-dark": {
+      "width": 1280,
+      "height": 800,
+      "items": {
+        "name": {
+          "top": 96,
+          "bottom": 146.59375,
+          "left": 221,
+          "right": 1059
+        },
+        "oneLiner": {
+          "top": 162.59375,
+          "bottom": 186.59375,
+          "left": 221,
+          "right": 1059
+        },
+        "hero": {
+          "top": 242.59375,
+          "bottom": 481.875,
+          "left": 221,
+          "right": 1059
+        },
+        "install": {
+          "top": 614.0625,
+          "bottom": 665.765625,
+          "left": 221,
+          "right": 1059
+        }
+      },
+      "checks": {
+        "name": true,
+        "oneLiner": true,
+        "hero": true,
+        "install": true
+      },
+      "install": "gh repo clone bmdy6/skill-bot-keepalive .agents/skills/bot-keepalive",
+      "contentWidth": 838,
+      "fold": 800,
+      "images": [
+        {
+          "src": "repo://skill-bot-keepalive/docs/readme/hero-dark.png",
+          "width": 838,
+          "height": 239.28125,
+          "top": 242.59375,
+          "bottom": 481.875,
+          "loaded": true,
+          "naturalWidth": 1800
+        }
+      ],
+      "screenshot": "first-screen-desktop-dark.png",
+      "pass": true
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "items": {
+        "name": {
+          "top": 88,
+          "bottom": 138.59375,
+          "left": 16,
+          "right": 374
+        },
+        "oneLiner": {
+          "top": 154.59375,
+          "bottom": 202.59375,
+          "left": 16,
+          "right": 374
+        },
+        "hero": {
+          "top": 258.59375,
+          "bottom": 360.8125,
+          "left": 16,
+          "right": 374
+        },
+        "install": {
+          "top": 517,
+          "bottom": 588.40625,
+          "left": 16,
+          "right": 374
+        }
+      },
+      "checks": {
+        "name": true,
+        "oneLiner": true,
+        "hero": true,
+        "install": true
+      },
+      "install": "gh repo clone bmdy6/skill-bot-keepalive .agents/skills/bot-keepalive",
+      "contentWidth": 358,
+      "fold": 844,
+      "images": [
+        {
+          "src": "repo://skill-bot-keepalive/docs/readme/hero-light.png",
+          "width": 358,
+          "height": 102.21875,
+          "top": 258.59375,
+          "bottom": 360.8125,
+          "loaded": true,
+          "naturalWidth": 1800
+        }
+      ],
+      "screenshot": "first-screen-mobile.png",
+      "pass": true
+    }
+  }
+}

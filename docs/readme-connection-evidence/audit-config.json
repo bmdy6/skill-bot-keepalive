@@ -1,0 +1,19 @@
+{
+  "readmes": {
+    "README.md": "zh-CN",
+    "README.en.md": "en"
+  },
+  "install": {
+    "block": "gh repo clone bmdy6/skill-bot-keepalive .agents/skills/bot-keepalive"
+  },
+  "coreAction": {
+    "output": {
+      "keywords": [
+        "remote session",
+        "远程会话",
+        "heartbeat log",
+        "心跳记录"
+      ]
+    }
+  }
+}

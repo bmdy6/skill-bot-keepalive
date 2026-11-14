@@ -1,0 +1,31 @@
+{
+  "checks": {
+    "only_two_readmes_changed": true,
+    "README.md commands_byte_identical": true,
+    "README.md measured_table_identical": true,
+    "README.md no_worklog": true,
+    "README.en.md commands_byte_identical": true,
+    "README.en.md measured_table_identical": true,
+    "README.en.md no_worklog": true,
+    "one_liners_within_limit": true,
+    "before desktop fold": true,
+    "before desktop-dark fold": true,
+    "before/en desktop fold": true,
+    "before/en desktop-dark fold": true,
+    "after desktop fold": true,
+    "after desktop-dark fold": true,
+    "after/en desktop fold": true,
+    "after/en desktop-dark fold": true,
+    "V3_V7_pass": true,
+    "V5_issues_identical": true,
+    "no_new_failing_checks": true,
+    "V6_only_preexisting_budget": true
+  },
+  "all_pass": true,
+  "one_liner_lengths": {
+    "zh_characters": 36,
+    "en_words": 16
+  },
+  "audit_before": 67,
+  "audit_after": 67
+}
