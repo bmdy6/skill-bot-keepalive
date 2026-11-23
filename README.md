@@ -1,3 +1,5 @@
+低维护：作为作品展示，Issue 可能不及时回复
+
 # bot-keepalive
 
 维持本机客户端与 Grok 云端远程会话的连接，持续使用 Claude。
