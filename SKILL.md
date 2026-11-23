@@ -1,47 +1,60 @@
 ---
 name: bot-keepalive
 description: >-
-  需要有界后台守护、分钟心跳、约30分钟接力和可核验停止/用量报告时使用；开跑前和用户说“没连上”时先按连接检查清单查远程会话是否真连着；默认省额度模式（后台脚本写心跳），不保证电脑永不休眠。
+  让用户电脑上的客户端（如 Orca）一直连着这台云电脑上的远程会话，有时长上限：开跑前先做连接检查，后台脚本每分钟写心跳，代理不间断地等待来让电脑保持醒着，每约30分钟接力一次，结束时报告心跳空档和额度。
+  用户说“保活/别休眠/没连上/断了”时使用。不保证电脑一定不休眠。
 ---
-# bot-keepalive（省额度版）
-来源：[realTaki/bot-keepalive](https://github.com/realTaki/bot-keepalive/blob/main/skills/bot-keepalive/SKILL.md)。外部文档仅为参考，其电脑休眠和50分钟强停说法不是已验证平台保证。
+# bot-keepalive：保持远程会话连着
 
-这个技能完全为“让用户电脑上的客户端一直连着盒子上的远程会话”服务：心跳只是让盒子醒着，真正要保证的是连接。所以**每次开跑前、以及用户说“没连上/断了”时，先做连接检查**，再谈心跳。
+目标是用户的客户端一直连着远程会话，写心跳不是目的。平台会让这台电脑休眠，官方没有关掉休眠的开关（[电脑文档](https://docs.x.ai/grok-bot/computer-and-apps)）。所以只说“尽量不休眠、休眠了如实报告”，不承诺不会断。
 
-## 第0步：连接检查（先做）
-按从下往上的顺序逐层查，找到第一层不通的就是原因：
-1. **网络层**：从盒子 `tailscale ping` 对端；看 `tailscale status` 里对端是 direct 还是 relay、哪个中转、延迟多少；看 netwatch 日志最近有没有 fail/recovered。也看本机 Self 在协调服务器是否 Online（长时间 Offline 会让连接不稳）。
-2. **SSH 层**：在用户电脑上（经本机 Grok 应用的 machine Shell）`nc -z` 盒子 22 端口，再用 `ssh -o BatchMode=yes -o ConnectTimeout=15` 跑一条 echo。macOS 没有 `timeout` 命令，别用。
-3. **服务层**：盒子上远程守护进程（如 orcad）在跑、端口在监听；`ss -tnp` 看有没有来自 tailscaled 的 ESTAB 连接挂在该端口上，有就说明客户端此刻是连着的。
-4. **客户端层**：读客户端自己的日志/trace（如 Orca 的 `main.trace.ndjson`），找 `control-socket-close`、`remote_runtime_unavailable` 等错误和时间间隔；周期性出现（例如每5–6分钟）说明是链路不稳导致反复重连，不是彻底断开。
-5. **盒子重启**：先看 `uptime`。若刚开机（tailscaled、守护脚本、orcad 都不在，`/tmp` 被清空），这不是网络问题：后台启动盒子的守护脚本（如 `/home/box/keepalive.sh`，它会拉起 tailscaled 和 netwatch），等十几秒确认对端能 ping 通、RunSSH 仍为 true；orcad 不要手动起，客户端重连后会自己重新部署，约半分钟后 ESTAB 回来。心跳脚本若在 `/tmp` 里丢了，从上一个运行目录复制。告诉用户“盒子重启过、已恢复到哪一层”。
-6. 版本：客户端升级后，若远程守护版本记录与客户端版本不一致，客户端通常会自己重新部署；先等它自己完成，别手动删改。
+## 核心规律（来自实测记录）
+**电脑醒着靠的是代理一直在等待，不是后台脚本。** 代理不等了，约5分钟后电脑就冻结，后台脚本也跟着停。
+- 11-23 12:26、14:33、16:33 三轮各2小时：代理只做等待和段末快速检查，**一次超过90秒的空档都没有**。
+- 11-23 19:30 那轮：代理在运行途中写事故记录、上网查资料、改技能，前后出现9次超时心跳，其中4次超过90秒（最长339秒，就在接力的时候）。界面显示“休眠中”也是在这段时间。
 
-结论按“哪一层、什么现象、现在状态”一两句告诉用户；客户端界面显示“正在发现/0 个主机”可能只是正在重连，先确认第3层再下结论。只做温和修复（rebind/restun、对端 ping、`tailscale up`），不重启守护进程、不 down/up，除非用户授权。
+由此得出的规则：**运行期间代理只负责等待，不做别的。** 分析、查资料、改技能，都放到截止以后再做。
 
-## 安全与能力
-先读取 team-rules、skill-authoring（保存/修改时）、usage-review（查额度时）。核对 Task、AwaitShell、Shell、CheckSubscriptionUsage 的实时描述。AwaitShell 单次最多780000ms；代理自己等待用 AwaitShell，不在前台用 Shell sleep。Task 仅父代理创建/接力，守护不能创建子代理；接力延迟必须记录。
+## 第0步：连接检查（开跑前，以及用户说没连上时）
+从下往上逐层查，第一层不通的就是原因：
+1. **盒子重启了吗**：看 `uptime`、boot_id。刚开机就后台启动 `/home/box/keepalive.sh`（它会拉起 tailscaled、netwatch）；orcad 不用手动启动，客户端重连后会自动部署。
+2. **网络**：`tailscale ping` 对端。只要出现 `pong ... via DERP(...)` 就算通（退出码是1也算）。超时一次可以重试，不要一次超时就判断断了。
+3. **SSH**：在对端执行 `nc -z` 测22端口，再执行 `ssh -o BatchMode=yes -o ConnectTimeout=15 ... echo ok`（macOS 没有 `timeout` 命令）。
+4. **服务**：orcad 还在运行；`ss -tnp` 看守护端口有没有 ESTAB 连接。
+5. **客户端**：读 Orca 的 `main.trace.ndjson`，找 `control-socket-close`、`remote_runtime_unavailable`、`heartbeat_missed_probes` 和对应时间。
 
-## 有界试验
-1. 明确用户授权时长，建立独立目录，写入绝对起止时间（epoch，截止不可变，只有用户明确延长才改）、唯一 run ID、事件和心跳日志；不修改现有保活/网络/例行任务。
-2. 起始取一次可见额度并保存原文；取不到记 unavailable，不猜。
-3. **默认省额度模式**：父代理自己用仓库脚本 [bmdy6/skill-bot-keepalive](https://github.com/bmdy6/skill-bot-keepalive) 的 scripts/heartbeat_loop.py（参数 --dir --run-id --start --deadline --tz-offset）先启动后台循环，首条心跳几秒内写出，再启动低 effort executor 只负责守着。脚本立即写第一条心跳，此后每60秒追加一条带时区时间戳的心跳（seq、kind、status、ts、epoch、gap），到截止时间写 kind=final 后自行退出；用 flock 保证只有一个循环，写过 final 后绝不再写。用 nohup + Shell block_until_ms 0 启动一次并记 PID。脚本内部的 sleep 可以用，代理自己不用。
-4. **让电脑醒着的是代理在等待，不是脚本。** 实测：代理中途不等了，约5分钟后电脑冻结约45分钟，脚本的 sleep 也跟着停，一条心跳都没写。所以 executor 必须一直守着，不能中途结束：起一个小 watcher（`while kill -0 PID; do sleep 20; done`），对它 AwaitShell 每段约10分钟，每段后做一次快速 Shell 检查（日志末尾、PID 存活、目前最大间隔，以及第0步第1、3层的快速检查：对端 relay 行、netwatch 日志末尾、守护端口是否有 ESTAB）。循环提前死掉只重启一次并记录；PID 存活时绝不起第二个循环。目标约每小时 6–15 次工具调用。
-5. 每腿约30分钟（不超过45分钟）返回 RELAY，循环保持运行；父代理立即 resume 同一 executor 接着等，沿用同一截止时间。每次只给它本轮的目录和 run ID，并写明忽略旧轮次。心跳间隔达到几分钟通常是电脑冻结，按冻结报告，不算写入失败。
-6. 准备工作要快，尽量在起始后几十秒内写出第一条心跳；首条心跳延迟单独报告。
-7. 截止后确认循环已写 final 并退出，写 summary.json FINAL，释放锁。不能取消用户其他任务，不杀共享进程。
-8. 结束取一次可见额度；报告心跳数/成功数、首条延迟、相邻最大间隔、所有 >90 秒间隔及时间、停止迟到、重启次数、接力次数、连接检查发现的断线/重连、总工具调用数。额度是整个账户共享窗口的可见变化，不可只归因保活，不推算 token/费用。
+结论用一两句话说清：哪一层、什么现象、现在什么状态。ESTAB 连接、ping 通只能说明那一层是好的；当前窗口是不是真的恢复了，要看客户端日志，或者让用户确认。
 
-## 备选：逐分钟代理心跳
-只有用户明确要求“代理每分钟亲自醒来”时才用旧方法：串行 AwaitShell 后单独 Shell 写心跳，自适应等待 max(5, 55 − 已过 − 上次延迟)，<50秒记 early_attempt 并补等到约52秒。额度消耗约为省额度模式的数倍。
+## 运行
+1. **准备（1分钟内完成）**：建目录 `/home/box/keepalive-runs/keepalive-YYYYMMDD-HHMM`，写下 run ID 和用户授权的时长；截止时间 = 实际启动时间 + 时长，之后不再改，用户明确说延长才改。读取一次额度，保存原文，读不到就写 unavailable。
+2. **启动心跳**：父代理复制仓库 [bmdy6/skill-bot-keepalive](https://github.com/bmdy6/skill-bot-keepalive) 里的 `scripts/heartbeat_loop.py`，用 nohup 启动一次（Shell 参数 block_until_ms=0）：
+   `python3 -u heartbeat_loop.py --dir $DIR --run-id $ID --start $START --deadline $DEADLINE --interval 60 --tz-offset 8`
+   确认第一条心跳几秒内写出，并记下 PID。脚本用 flock 保证只有一个实例，到截止时间写 `kind=final` 后自动退出。
+3. **等待**：启动一个低 effort 的 executor，只做这一件事：启动 watcher（`while kill -0 $PID; do sleep 20; done`），对它执行 AwaitShell，每段约10分钟（单次不超过780000ms）；每段结束后用一条 Shell 快速检查：心跳末尾、PID 是否还活着、最大间隔、对端 ping、ESTAB。检查完马上开始下一段。每小时约6–15次工具调用。
+4. **接力**：约每30分钟（不超过45分钟）executor 返回 RELAY，父代理**马上** resume 同一个 executor，截止时间不变。两段等待之间的空白越短越好。
+5. **截止**：确认心跳文件写了 final、循环和 watcher 都已退出，再写 `summary.json`。
+
+## 出现空档或休眠时
+- 心跳间隔超过90秒，或者界面显示“Bot 的电脑：休眠中”，就记一条事件（时间、间隔长度），**通知用户一次**，然后继续等待到截止。之后同类的空档合并记录，不重复通知。
+- 不要因为出现空档就停下来写长篇分析、上网查资料、改技能。这样做本身就会让代理不在等待，空档会更多（19:30 那轮就是这样）。
+- Shell 能返回结果，说明电脑此刻在运行；可以执行一次 `box-doctor`。
+- 心跳循环中途退出：确认旧 PID 已经不在，在同一个目录里重启一次，截止时间不变，并记下来。PID 还活着时，绝不启动第二个循环。
+
+## 安全边界
+- 不向 Claude 会话发测试消息，不重发，不取消用户的其他任务，不杀共享进程。
+- 未经用户授权：不重启 tailscaled、Orca、orcad、Claude，不执行 `tailscale down/up`，不改电源、代理、路由配置。休眠问题不能靠重启 Tailscale 解决。
+- 可以做的温和修复：从对端 ping 盒子；`tailscale debug rebind` / `debug restun`，单侧做一次，并且不要和正在工作的 netwatch 同时做。
+- 用户说停：先停 executor，再按 PID 停掉本轮的循环和 watcher。
 
 ## 报告
-只写实测结果及限制，中文一两段。正常期间保持安静，只在故障或最终结果时通知。
+正常运行期间不说话。结束时用中文写一两段：
+- 第一句写结论：全程没有超过90秒的空档，或者出现了几次空档（时间、长度）、界面有没有出现休眠。
+- 然后写：实际心跳数/应有心跳数、首条心跳延迟、最大间隔、接力次数、重启次数、连接检查发现的断开和恢复。
+- 额度：只比较起止两次读数。额度是整个账户共用的，不全算在保活头上，也不推算 token 或费用。
+- 出现过空档的轮次不能写成“保活成功”。全程没空档，也只说“这段时间没休眠”，不承诺以后。
 
-## 自动修复断线（netwatch）
-心跳只保证电脑醒着，断线多半是网络侧：盒子的公网端点频繁变化后，盒子到对端的 DERP 中转会失效，而对端到盒子仍通。
-- 用仓库里的 `scripts/netwatch.sh`：flock 单实例，每 30 秒 ping 对端，连续 2 次不通就 `tailscale debug rebind` + `debug restun`，每分钟最多一次，记录到日志。
-- 只做温和修复：绝不 down/up，不重启 tailscaled，不碰远程会话客户端/守护。后台脚本不耗额度。
-- 用 nohup 启动；让已有的守护脚本在进程不在时重新拉起它。
-- ping 能通不代表客户端连着：netwatch 正常时仍要按第0步第3、4层确认。
-- 若自动修复无效：从对端 ping 一下盒子往往能把路径打通，仍不行再按授权处理。
+## 可选：netwatch 自动修复网络
+仓库里的 `scripts/netwatch.sh` 只运行一个实例，每30秒 ping 一次对端，连续2次不通就执行 rebind + restun，每分钟最多一次。它不重启 tailscaled，也不碰会话。由 `keepalive.sh` 负责在它退出后拉起来。ping 通不代表客户端连着，仍然要按第0步第4、5层确认。
+
+## 备选：代理逐分钟心跳
+只有用户明确要求“代理每分钟亲自醒来”时才用：AwaitShell 约55秒后用 Shell 写一条心跳，如此循环。额度消耗是默认方式的好几倍，同样不保证不休眠。
