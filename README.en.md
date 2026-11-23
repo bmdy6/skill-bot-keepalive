@@ -1,3 +1,5 @@
+低维护：作为作品展示，Issue 可能不及时回复
+
 # bot-keepalive
 
 Keep your client connected to remote sessions on a Grok cloud computer to keep using Claude.
